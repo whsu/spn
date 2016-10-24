@@ -41,14 +41,3 @@ class BinaryNormalLeafNode(Node):
 			nodes[i] = BinaryNormalLeafNode(n, v, stat.normal.mean[i])
 		return nodes
 
-if __name__ == '__main__':
-	from .spn import *
-	obs = np.hstack((np.random.binomial(1, 0.2, (10000,1)),
-	                 np.random.binomial(1, 0.5, (10000,1)),
-	                 np.random.binomial(1, 0.8, (10000,1))))
-	node = BinaryNormalLeafNode(0, 2, 0)
-	params = SPNParams()
-	for x in obs:
-		node.update(x, params)
-	node.display()
-

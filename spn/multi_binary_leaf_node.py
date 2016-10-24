@@ -39,24 +39,3 @@ class MultiBinaryLeafNode(Node):
 	def prune(self, depth, params):
 		pass
 
-if __name__ == '__main__':
-	import numpy as np
-	from scipy.stats import multivariate_normal
-
-	np.set_printoptions(precision=3)
-	np.random.seed(0)
-
-	n = 10000
-	x = np.random.binomial(1, 0.1, (n,1))
-	y = np.empty((n,1))
-	i = np.where(x==0)[0]
-	j = np.where(x==1)[0]
-	y[i] = np.random.binomial(1, 0.2, (len(i),1))
-	y[j] = np.random.binomial(1, 0.9, (len(j),1))
-	z = np.random.binomial(1, 0.8, (n,1))
-	obs = np.hstack((x,y,z)).astype(int)
-
-	node = MultiBinaryLeafNode.create(0, np.array([0,1,2]))
-	for x in obs:
-		node.update(x, None)
-	node.display()

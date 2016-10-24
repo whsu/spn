@@ -39,21 +39,3 @@ class MultiNormalLeafNode(Node):
 	def prune(self, depth, params):
 		pass
 
-if __name__ == '__main__':
-	import numpy as np
-	from scipy.stats import multivariate_normal
-
-	np.set_printoptions(precision=3)
-	np.random.seed(0)
-	mean = np.array([1., 2., 3.])
-	cov = np.array([[1.0, 0.5, 0.0],[0.5,2.0,0.0],[0.0,0.0,3.0]])
-	obs = np.random.multivariate_normal(mean, cov, 100000)
-	node = MultiNormalLeafNode.create(0, np.array([0,1]))
-	for x in obs:
-		node.update(x, None)
-	print(node.evaluate(obs[0]))
-#	print(node.n)
-#	print(node.scope)
-#	print(node.mvn.mean)
-#	print(node.mvn.cov)
-#	node.display()

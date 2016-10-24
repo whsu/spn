@@ -41,16 +41,3 @@ class BinaryLeafNode(Node):
 			nodes[i] = BinaryLeafNode(n, v, stat.probs[i])
 		return nodes
 
-if __name__ == '__main__':
-	from .spn import *
-	obs = np.hstack((np.random.binomial(1, 0.2, (10000,1)),
-	                 np.random.binomial(1, 0.5, (10000,1)),
-	                 np.random.binomial(1, 0.8, (10000,1))))
-	node = BinaryLeafNode(0, 2, 0)
-	params = SPNParams()
-	for x in obs:
-		node.update(x, params)
-	print(node.n)
-	print(node.scope)
-	print(node.count)
-

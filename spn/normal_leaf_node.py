@@ -47,14 +47,3 @@ class NormalLeafNode(Node):
 			nodes[i] = NormalLeafNode(n, v, stat.mean[i], stat.cov[i,i])
 		return nodes
 
-if __name__ == '__main__':
-	from .spn import *
-	obs = np.random.normal(1.0, 2.0, (10000,3))
-	node = NormalLeafNode(0, 1, 0.0, 0.0)
-	params = SPNParams()
-	for x in obs:
-		node.update(x, params)
-	print(node.n)
-	print(node.scope)
-	print(node.mean)
-	print(node.var)	
