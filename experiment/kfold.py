@@ -45,13 +45,13 @@ def run_kfold(vartype, name, k, numvar, params):
 	return results, times, models
 
 def run(vartype, traintest, name, numvar, mergebatch, corrthresh, equalweight, updatestruct,
-	    maxdepth, prunebatch, mvleaf, mvmaxscope, binary):
+	    maxdepth, prunebatch, mvleaf, mvmaxscope, leaftype):
 	outfile = "{0}_{1}_{2}_{3}_{4}_{5}".format(name, mergebatch,
                            corrthresh, maxdepth, prunebatch, mvmaxscope)
 	resultpath = os.path.join(OUTDIR, "{0}.txt".format(outfile))
 	picklepath = os.path.join(OUTDIR, "{0}.pkl".format(outfile))
 	params = SPNParams(mergebatch, corrthresh, equalweight, updatestruct,
-	    maxdepth, prunebatch, mvleaf, mvmaxscope, binary)
+	    maxdepth, prunebatch, mvleaf, mvmaxscope, leaftype)
 
 	print('******{0}*******'.format(name))
 
@@ -82,32 +82,32 @@ def run(vartype, traintest, name, numvar, mergebatch, corrthresh, equalweight, u
 		print(models)
 
 if __name__ == '__main__':
-#	run('real', False, 'qu', 4, 10, 0.1, True, True, 100, 1000, True, 4, False)
-#	run('real', False, 'banknote', 4, 10, 0.1, True, True, 100, 1000, True, 4, False)
-#	run('real', False, 'sensorless_drive', 48, 1000, 0.1, True, True, 100, 1000, True, 4, False)
-#	run('real', False, 'flowdata', 3, 10000, 0.1, True, True, 100, 1000, True, 4, False)
-#	run('real', False, 'abalone', 8, 10, 0.1, True, True, 100, 1000, True, 4, False)
-#	run('real', False, 'ki', 8, 10, 0.1, True, True, 100, 1000, True, 4, False)
-#	run('real', False, 'ca', 22, 10, 0.1, True, True, 100, 1000, True, 4, False)
+	run("real", False, 'qu', 4, 10, 0.1, True, True, 10, 1000, True, 0, "normal")
+	run("real", False, 'banknote', 4, 10, 0.1, True, True, 100, 1000, True, 0, "normal")
+	run("real", False, 'sensorless_drive', 48, 1000, 0.1, True, True, 100, 1000, True, 4, "normal")
+	run("real", False, 'flowdata', 3, 10000, 0.1, True, True, 100, 1000, True, 0, "normal")
+	run("real", False, 'abalone', 8, 10, 0.1, True, True, 100, 1000, True, 4, "normal")
+	run("real", False, 'ki', 8, 10, 0.1, True, True, 100, 1000, True, 4, "normal")
+	run("real", False, 'ca', 22, 10, 0.1, True, True, 100, 1000, True, 4, "normal")
 
-	run('binary', True, 'nltcs', 16, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'plants', 69, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'baudio', 100, 100, 0.1, True, True, 50, 1000, False, 4, True)
-	run('binary', True, 'jester', 100, 10, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'bnetflix', 100, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'accidents', 111, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'tretail', 135, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'pumsb_star', 163, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'dna', 180, 10, 0.1, True, True, 100, 50, False, 4, True)
-#	run('binary', True, 'kosarek', 190, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'msweb', 294, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'book', 500, 10, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'tmovie', 500, 10, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'cwebkb', 839, 10, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'cr52', 889, 10, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'c20ng', 910, 100, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'bbc', 1058, 10, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'ad', 1556, 10, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'msnbc', 17, 10000, 0.1, True, True, 50, 1000, False, 4, True)
-#	run('binary', True, 'kdd', 64, 10000, 0.1, True, True, 50, 1000, False, 4, True)
+	run("binary", True, 'nltcs', 16, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'plants', 69, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'baudio', 100, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'jester', 100, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'bnetflix', 100, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'accidents', 111, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'tretail', 135, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'pumsb_star', 163, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'dna', 180, 10, 0.1, True, True, 100, 50, False, 4, "binarynormal")
+	run("binary", True, 'kosarek', 190, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'msweb', 294, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'book', 500, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'tmovie', 500, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'cwebkb', 839, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'cr52', 889, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'c20ng', 910, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'bbc', 1058, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'ad', 1556, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'msnbc', 17, 10000, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
+	run("binary", True, 'kdd', 64, 10000, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
 

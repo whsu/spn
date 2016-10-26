@@ -8,11 +8,19 @@ from .multi_normal_stat import MultiNormalStat
 from .binary_normal_leaf_node import BinaryNormalLeafNode
 from .multi_binary_normal_leaf_node import MultiBinaryNormalLeafNode
 from .multi_binary_normal_stat import MultiBinaryNormalStat
+from .binary_leaf_node import BinaryLeafNode
+from .multi_binary_leaf_node import MultiBinaryLeafNode
+from .multi_binary_stat import MultiBinaryStat
 
 class ProductNode(Node):
-	def __init__(self, n, scope, binary=False, src=None):
+	def __init__(self, n, scope, leaftype, src=None):
 		super(ProductNode, self).__init__(n, scope)
-		if binary:
+		if leaftype == "binary":
+			self.Stat = MultiBinaryStat
+			self.Leaf = BinaryLeafNode
+			self.MVLeaf = MultiBinaryLeafNode
+			self.dtype = int
+		elif leaftype == "binarynormal":
 			self.Stat = MultiBinaryNormalStat
 			self.Leaf = BinaryNormalLeafNode
 			self.MVLeaf = MultiBinaryNormalLeafNode
@@ -102,10 +110,10 @@ class ProductNode(Node):
 		return np.array([self.v2i[v] for v in scope])
 
 	def merge_into_sumnode(self, ci, cj, scope, obs, params):
-		p1 = ProductNode(self.n, scope, params.binary, self)
+		p1 = ProductNode(self.n, scope, params.leaftype, self)
 		p1.add_children(ci, cj)
 
-		p2 = ProductNode(1, scope, params.binary)
+		p2 = ProductNode(1, scope, params.leaftype)
 		p2.stat = self.stat.extract_from_obs(self.map_scope(scope), obs[scope])
 		children = self.Leaf.create_from_stat(p2.n, p2.scope, p2.stat)
 		p2.add_children(*children)

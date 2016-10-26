@@ -8,7 +8,8 @@ from .multi_normal_leaf_node import MultiNormalLeafNode
 class SPNParams:
 	def __init__(self, mergebatch=10, corrthresh=0.1, equalweight=True,
 	             updatestruct=True, maxdepth=20, prunebatch=1000, mvleaf=True,
-	             mvmaxscope=2, binary=False):
+	             mvmaxscope=2, leaftype="normal"):
+		assert not (mvmaxscope > 2 and leaftype=="binary")
 		self.mergebatch = mergebatch
 		self.corrthresh = corrthresh
 		self.equalweight = equalweight
@@ -17,14 +18,15 @@ class SPNParams:
 		self.prunebatch = prunebatch
 		self.mvleaf = mvleaf
 		self.mvmaxscope = mvmaxscope
-		self.binary = binary
+		self.leaftype = leaftype
+		self.binary = False if leaftype=="normal" else True
 
 class SPN:
 	def __init__(self, node, params):
 		if type(node) == int:
 			numvar = node
 			scope = np.arange(numvar)
-			node = make_product_net(scope, params.binary)
+			node = make_product_net(scope, params.leaftype)
 		self.root = RootNode(node)
 		self.params = params
 
@@ -37,8 +39,8 @@ class SPN:
 	def display(self):
 		self.root.display()
 
-def make_product_net(scope, binary):
-	node = ProductNode(0, scope, binary)
+def make_product_net(scope, leaftype):
+	node = ProductNode(0, scope, leaftype)
 	for v in scope:
 		node.add_child(node.Leaf(0, v))
 	return node
@@ -66,7 +68,7 @@ if __name__ == '__main__':
 	y[j] = np.random.binomial(1, 0.9, (len(j),1))
 	z = np.random.binomial(1, 0.8, (n,1))
 	obs = np.hstack((x,y,z)).astype(int)
-	s = SPN(3, SPNParams(mergebatch=1000, binary=True))
+	s = SPN(3, SPNParams(mergebatch=1000, leaftype="binary"))
 	p = s.root.children[0]
 
 	i = 0

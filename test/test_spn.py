@@ -56,7 +56,7 @@ class TestSPN(unittest.TestCase):
 	def test_product_evaluate_1(self):
 		child1 = NormalLeafNode(10, 0, 0.0, 1.0)
 		child2 = NormalLeafNode(10, 0, 1.0, 4.0)
-		node = ProductNode(10, np.array([0]))
+		node = ProductNode(10, np.array([0]), "normal")
 		node.children.append(child1)
 		node.children.append(child2)
 		s = SPN(node, SPNParams())
@@ -69,7 +69,7 @@ class TestSPN(unittest.TestCase):
 		child1.children.append(grandchild1)
 		child1.children.append(grandchild2)
 		child2 = NormalLeafNode(10, 1, -1.0, 1.0)
-		node = ProductNode(10, np.array([0,1]))
+		node = ProductNode(10, np.array([0,1]), "normal")
 		node.children.append(child1)
 		node.children.append(child2)
 		s = SPN(node, SPNParams())
@@ -83,7 +83,7 @@ class TestSPN(unittest.TestCase):
 		obs = np.random.multivariate_normal(mean, cov, n)
 		child1 = MultiNormalLeafNode.create(0, np.array([0,1]))
 		child2 = NormalLeafNode(0, 2, 0.0, 0.0)
-		node = ProductNode(0, np.array([0,1,2]))
+		node = ProductNode(0, np.array([0,1,2]), "normal")
 		node.children = [child1, child2]
 		s = SPN(node, SPNParams())
 		for x in obs:
