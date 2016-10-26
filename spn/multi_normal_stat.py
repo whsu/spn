@@ -56,3 +56,8 @@ class MultiNormalStat:
 	def extract(self, ind):
 		return MultiNormalStat.create_copy(self.mean[ind], self.cov[np.ix_(ind,ind)])
 
+	def extract_from_obs(self, ind, x):
+		cov = self.cov[np.ix_(ind,ind)]
+		stat = MultiNormalStat.create_copy(x, np.diag(np.diag(cov)))
+		return stat
+

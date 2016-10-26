@@ -47,3 +47,8 @@ class MultiBinaryNormalStat:
 	def extract(self, ind):
 		return MultiBinaryNormalStat.create_copy(self.normal.mean[ind], self.normal.cov[np.ix_(ind,ind)])
 
+	def extract_from_obs(self, ind, x):
+		stat = MultiBinaryNormalStat()
+		stat.normal = self.normal.extract_from_obs(ind, x)
+		return stat
+

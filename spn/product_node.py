@@ -106,7 +106,7 @@ class ProductNode(Node):
 		p1.add_children(ci, cj)
 
 		p2 = ProductNode(1, scope, params.binary)
-		p2.stat = self.stat.extract(self.map_scope(scope))
+		p2.stat = self.stat.extract_from_obs(self.map_scope(scope), obs[scope])
 		children = self.Leaf.create_from_stat(p2.n, p2.scope, p2.stat)
 		p2.add_children(*children)
 

@@ -61,3 +61,8 @@ class MultiBinaryStat:
 				matrices[(i,j)] = self.matrices[(ind[i],ind[j])]
 		return MultiBinaryStat.create_copy(self.probs[ind], matrices)
 
+	def extract_from_obs(self, ind, x):
+		stat = MultiBinaryStat.create(len(ind))
+		stat.update(x, 1)
+		return stat
+
