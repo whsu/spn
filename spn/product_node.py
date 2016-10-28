@@ -58,10 +58,10 @@ class ProductNode(Node):
 		return value
 
 	def update(self, obs, params):
-		self.stat.update(obs[self.scope], self.n)
+		self.stat.update(obs[:,self.scope], self.n)
 
 		merged = False
-		if params.updatestruct and self.n >= params.mergebatch*(self.merges+1):
+		if params.updatestruct and self.n >= params.mergebatch:
 			for i, j in self.stat.iterate_corrs(params.corrthresh):
 				if self.i2c[i] == self.i2c[j]:
 					continue
@@ -72,7 +72,7 @@ class ProductNode(Node):
 		if not merged:
 			self.update_children(obs, params)
 
-		self.n += 1
+		self.n += len(obs)
 
 	def update_children(self, obs, params):
 		for child in self.children:
@@ -96,7 +96,7 @@ class ProductNode(Node):
 
 	def merge_into_mvleaf(self, ci, cj, scope, obs, params):
 		ind = [self.v2i[k] for k in scope]
-		m = self.MVLeaf.create_from_stat(self.n+1, scope, self.stat.extract(ind))
+		m = self.MVLeaf.create_from_stat(self.n+len(obs), scope, self.stat.extract(ind))
 		self.remove_children(ci, cj)
 		if len(self.children) > 0:
 			self.update_children(obs, params)
@@ -113,13 +113,16 @@ class ProductNode(Node):
 		p1 = ProductNode(self.n, scope, params.leaftype, self)
 		p1.add_children(ci, cj)
 
-		p2 = ProductNode(1, scope, params.leaftype)
-		p2.stat = self.stat.extract_from_obs(self.map_scope(scope), obs[scope])
+		p2 = ProductNode(0, scope, params.leaftype)
+		p2.stat = self.stat.extract_from_obs(self.map_scope(scope), obs[:,scope])
 		children = self.Leaf.create_from_stat(p2.n, p2.scope, p2.stat)
 		p2.add_children(*children)
 
-		s = SumNode(p1.n+p2.n, scope)
+		s = SumNode(p1.n, scope)
 		s.add_children(p1, p2)
+		params.updatestruct = False
+		s.update(obs, params)
+		params.updatestruct = True
 
 		self.remove_children(ci, cj)
 		if len(self.children) > 0:

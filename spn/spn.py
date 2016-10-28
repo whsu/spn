@@ -6,10 +6,11 @@ from .normal_leaf_node import NormalLeafNode
 from .multi_normal_leaf_node import MultiNormalLeafNode
 
 class SPNParams:
-	def __init__(self, mergebatch=10, corrthresh=0.1, equalweight=True,
+	def __init__(self, batchsize=128, mergebatch=128, corrthresh=0.1, equalweight=True,
 	             updatestruct=True, maxdepth=20, prunebatch=1000, mvleaf=True,
 	             mvmaxscope=2, leaftype="normal"):
 		assert not (mvmaxscope > 2 and leaftype=="binary")
+		self.batchsize = batchsize
 		self.mergebatch = mergebatch
 		self.corrthresh = corrthresh
 		self.equalweight = equalweight
@@ -31,10 +32,15 @@ class SPN:
 		self.params = params
 
 	def evaluate(self, obs):
+		if obs.ndim == 1:
+			obs = obs.reshape(1, len(obs))
 		return self.root.evaluate(obs)
 
 	def update(self, obs):
-		self.root.update(obs, self.params)
+		if obs.ndim == 1:
+			obs = obs.reshape(1, len(obs))
+		for i in range(0, len(obs), self.params.batchsize):
+			self.root.update(obs[i:i+self.params.batchsize], self.params)
 
 	def display(self):
 		self.root.display()
@@ -55,27 +61,22 @@ if __name__ == '__main__':
 	np.random.seed(0)
 	n = 10000
 
-#	mean = np.array([1., 2., 3.])
-#	cov = np.array([[1.0, 0.5, 0.0],[0.5,2.0,0.0],[0.0,0.0,3.0]])
-#	obs = np.random.multivariate_normal(mean, cov, n)
-#	s = SPN(3, SPNParams(mergebatch=1000))
+	mean = np.array([1., 2., 3.])
+	cov = np.array([[1.0, 0.5, 0.0],[0.5,2.0,0.0],[0.0,0.0,3.0]])
+	obs = np.random.multivariate_normal(mean, cov, n)
+	s = SPN(3, SPNParams(mvmaxscope=0))
 
-	x = np.random.binomial(1, 0.1, (n,1))
-	y = np.empty((n,1))
-	i = np.where(x==0)[0]
-	j = np.where(x==1)[0]
-	y[i] = np.random.binomial(1, 0.2, (len(i),1))
-	y[j] = np.random.binomial(1, 0.9, (len(j),1))
-	z = np.random.binomial(1, 0.8, (n,1))
-	obs = np.hstack((x,y,z)).astype(int)
-	s = SPN(3, SPNParams(mergebatch=1000, leaftype="binary"))
-	p = s.root.children[0]
+#	x = np.random.binomial(1, 0.1, (n,1))
+#	y = np.empty((n,1))
+#	i = np.where(x==0)[0]
+#	j = np.where(x==1)[0]
+#	y[i] = np.random.binomial(1, 0.2, (len(i),1))
+#	y[j] = np.random.binomial(1, 0.9, (len(j),1))
+#	z = np.random.binomial(1, 0.8, (n,1))
+#	obs = np.hstack((x,y,z)).astype(int)
+#	s = SPN(3, SPNParams(mergebatch=1000, leaftype="binary"))
+#	p = s.root.children[0]
 
-	i = 0
-	for x in obs:
-		s.update(x)
-		i += 1
-		if i % 100==0:
-			print(i)
+	s.update(obs)
 	s.display()
 

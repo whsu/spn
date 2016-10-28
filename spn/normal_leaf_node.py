@@ -9,7 +9,7 @@ class NormalLeafNode(Node):
 		super(NormalLeafNode, self).__init__(n, np.array([index]))
 		self.index = index
 		self.mean = mean
-		self.var = var
+		self.var = max(var, 1e-4)
 
 	def display(self, depth=0):
 		print("{0}<' {1} {2} {3} {4}>".format(
@@ -26,13 +26,17 @@ class NormalLeafNode(Node):
 		return obs
 
 	def evaluate(self, obs):
-		return self.logpdf(obs[self.index])
+		return self.logpdf(obs[:,self.index])
 
 	def update(self, obs, params):
-		x = obs[self.index]
-		mean = (self.n*self.mean + x) / (self.n + 1)
-		var = (self.n*self.var + (x-self.mean)*(x-mean)) / (self.n + 1)
-		self.n += 1
+		n = max(self.n, 1)
+		k = obs.shape[0]
+		x = obs[:,self.index]
+		mean = (n*self.mean + x.sum()) / (n + k)
+		dx = x - self.mean
+		dm = mean - self.mean
+		var = (n*self.var + dx.dot(dx)) / (n + k) - dm*dm
+		self.n += k
 		self.mean = mean
 		self.var = var
 

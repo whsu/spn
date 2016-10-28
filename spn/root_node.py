@@ -14,7 +14,7 @@ class RootNode(Node):
 	def update(self, obs, params):
 		self.children[0].update(obs, params)
 		self.n += 1
-		if self.n % params.prunebatch == 0:
+		if params.prunebatch > 0 and self.n % params.prunebatch == 0:
 			params = copy.copy(params)
 			params.updatestruct = False
 			self.children[0].prune(params.maxdepth, params)

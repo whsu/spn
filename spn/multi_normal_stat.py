@@ -24,24 +24,23 @@ class MultiNormalStat:
 		return multivariate_normal.logpdf(x, self.mean, self.cov)
 
 	def update(self, x, n):
+		k = x.shape[0]
 		mean = self.mean
 		cov = self.cov
 
-		mean_new = (n * mean + x) / (n + 1)
+		mean_new = (n * mean + x.sum(axis=0)) / (n + k)
 
 		dx = x - mean
 		dm = mean_new - mean
 
-		cov_new = np.empty_like(cov)
-		for i in range(len(x)):
-			for j in range(len(x)):
-				cov_new[i,j] = (n*cov[i,j]+dx[i]*dx[j]-(n+1)*dm[i]*dm[j])/(n+1)
+		cov_new = (n*cov + dx.T.dot(dx)) / (n + k) - np.outer(dm, dm)
 
 		self.mean = mean_new
 		self.cov = cov_new
 
 	def iterate_corrs(self, corrthresh):
-		v = np.diag(self.cov)
+		v = np.diag(self.cov).copy()
+		v[v<1e-4] = 1e-4
 		corrs = np.abs(self.cov) / np.sqrt(np.outer(v, v))
 		rows, cols = np.unravel_index(np.argsort(corrs.flatten()), corrs.shape)
 
@@ -58,6 +57,6 @@ class MultiNormalStat:
 
 	def extract_from_obs(self, ind, x):
 		cov = self.cov[np.ix_(ind,ind)]
-		stat = MultiNormalStat.create_copy(x, np.diag(np.diag(cov)))
+		stat = MultiNormalStat.create_copy(x.mean(axis=0), np.diag(np.diag(cov)))
 		return stat
 

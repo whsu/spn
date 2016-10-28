@@ -14,24 +14,28 @@ class SumNode(Node):
 
 	def evaluate(self, obs):
 		logprobs = self.evaluate_children(obs, False)
-		return logsumexp(logprobs)
+		return logsumexp(logprobs, axis=1)
 
 	def evaluate_children(self, obs, equal_weight):
-		logprobs = np.array([child.evaluate(obs) for child in self.children])
+		logprobs = np.vstack([child.evaluate(obs) for child in self.children]).T
 		if equal_weight:
 			return logprobs
 		else:
-			logweights = np.array([self.get_log_weight(child) for child in self.children])
+			logweights = self.get_log_weights()
 			return logprobs + logweights			
 
-	def get_log_weight(self, child):
-		return np.log(child.n) - np.log(self.n)
+	def get_log_weights(self):
+		counts = np.array([child.n for child in self.children])
+		return np.log((counts+1)/(self.n+len(self.children)))
 
 	def update(self, obs, params):
 		logprobs = self.evaluate_children(obs, params.equalweight)
-		topchild = self.children[np.argmax(logprobs)]
-		self.n += 1
-		topchild.update(obs, params)
+		childind = np.argmax(logprobs, axis=1)
+		for i in range(len(self.children)):
+			ind = np.where(childind==i)[0]
+			if len(ind) > 0:
+				self.children[i].update(obs[ind,:], params)
+		self.n += len(obs)
 
 	def add_child(self, child):
 		assert np.array_equal(child.scope, self.scope)
@@ -48,6 +52,7 @@ class SumNode(Node):
 			child = self.children[i]
 			if child.n == 1:
 				obs = child.rep()
+				obs = obs.reshape(1, len(obs))
 				self.children.pop(i)
 				self.n -= 1
 				self.update(obs, params)
