@@ -89,8 +89,8 @@ if __name__ == '__main__':
 	run("real", F, 'sensorless', 48, 256, 256, 0.1, T, T, 100, 0, T, 4, N)
 	run("real", F, 'flowdata',    3, 256, 256, 0.1, T, T, 100, 0, T, 0, N)
 	run("real", F, 'abalone',     8,   1,  10, 0.1, T, T, 100, 0, T, 4, N)
-	run("real", F, 'ki',          8,   1,  10, 0.1, T, T, 100, 0, T, 4, N)
-	run("real", F, 'ca',         22,   1,  10, 0.1, T, T, 100, 0, T, 4, N)
+	run("real", F, 'ki',          8,  10,  10, 0.1, T, T, 100, 0, T, 4, N)
+	run("real", F, 'ca',         22,  10,  10, 0.1, T, T, 100, 0, T, 4, N)
 	exit(0)
 
 	run("binary", True, 'nltcs', 16, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")

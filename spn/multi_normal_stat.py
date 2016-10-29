@@ -21,7 +21,11 @@ class MultiNormalStat:
 		return "Normal({0}, {1})".format(self.mean, self.cov.flatten())
 
 	def evaluate(self, x):
-		return multivariate_normal.logpdf(x, self.mean, self.cov)
+		try:
+			return multivariate_normal.logpdf(x, self.mean, self.cov)
+		except np.linalg.LinAlgError:
+			self.cov[np.diag_indices_from(self.cov)] += 1e-4
+			return multivariate_normal.logpdf(x, self.mean, self.cov)
 
 	def update(self, x, n):
 		k = x.shape[0]
