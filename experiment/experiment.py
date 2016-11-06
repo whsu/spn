@@ -8,7 +8,7 @@ class Experiment:
 
 	def train_one_file(self, filename):
 		dtype = int if self.model.params.binary else float
-		obs = np.loadtxt(filename, delimiter=",")
+		obs = np.loadtxt(filename, delimiter=",", dtype=dtype)
 		self.model.update(obs)
 
 	def train(self):
@@ -18,7 +18,7 @@ class Experiment:
 
 	def evaluate_one_file(self, filename):
 		dtype = int if self.model.params.binary else float
-		obs = np.loadtxt(filename, delimiter=",")
+		obs = np.loadtxt(filename, delimiter=",", dtype=dtype)
 		logprob = self.model.evaluate(obs)
 		return logprob
 
