@@ -60,7 +60,7 @@ class TestSPN(unittest.TestCase):
 		node.children.append(child1)
 		node.children.append(child2)
 		s = SPN(node, SPNParams())
-		self.assertAlmostEqual(s.evaluate(np.array([0.0])), -2.656024246969)
+		np.testing.assert_almost_equal(s.evaluate(np.array([0.0])), -2.656024246969)
 
 	def test_product_sum_evaluate_1(self):
 		grandchild1 = NormalLeafNode(3, 0, 0.0, 1.0)
@@ -73,7 +73,7 @@ class TestSPN(unittest.TestCase):
 		node.children.append(child1)
 		node.children.append(child2)
 		s = SPN(node, SPNParams())
-		self.assertAlmostEqual(s.evaluate(np.array([0.0, 1.0])), -4.33402113)
+		np.testing.assert_almost_equal(s.evaluate(np.array([0.0, 1.0])), -4.3038903197602858)
 
 	def test_product_mv_update_1(self):
 		np.random.seed(0)
@@ -103,7 +103,9 @@ class TestSPN(unittest.TestCase):
 		node.children.append(child1)
 		node.children.append(child2)
 		s = SPN(node, SPNParams())
-		self.assertAlmostEqual(s.evaluate(np.array([0.0])), -1.41508260055)
+		# Sum node uses add-one smoothing, so the expected result is
+		# log( (4/12)*N(0|0,1)+(8/12)*N(0|1,4) ) = -1.3849517865556134
+		np.testing.assert_almost_equal(s.evaluate(np.array([0.0])), -1.38495179)
 
 	def test_sum_update_1(self):
 		child1 = NormalLeafNode(3, 0, 0.0, 1.0)
@@ -123,33 +125,44 @@ class TestSPN(unittest.TestCase):
 		self.assertEqual(child2.n, 7)
 
 	def test_binary_leaf_update(self):
-		obs, marg, margpair, cov = binary_test_data(100000)
+		n = 100000
+		obs, marg, margpair, cov = binary_test_data(n)
 		nodes = [BinaryLeafNode(0, i, 0) for i in range(3)]
 		params = SPNParams()
 		for x in obs:
 			for i in range(3):
 				nodes[i].update(x, params)
+		self.assertEqual(nodes[0].n, n)
+		self.assertEqual(nodes[1].n, n)
+		self.assertEqual(nodes[2].n, n)
 		self.assertAlmostEqual(nodes[0].p, marg[0], 2)
 		self.assertAlmostEqual(nodes[1].p, marg[1], 2)
 		self.assertAlmostEqual(nodes[2].p, marg[2], 2)
 
 	def test_binary_normal_leaf_update(self):
-		obs, marg, margpair, cov = binary_test_data(100000)
+		n = 100000
+		m = 100
+		obs, marg, margpair, cov = binary_test_data(n)
 		nodes = [BinaryNormalLeafNode(0, i, 0) for i in range(3)]
 		params = SPNParams()
-		for x in obs:
+		for k in range(0, n, m):
 			for i in range(3):
-				nodes[i].update(x, params)
+				nodes[i].update(obs[k:k+m,:], params)
+		self.assertEqual(nodes[0].n, n)
+		self.assertEqual(nodes[1].n, n)
+		self.assertEqual(nodes[2].n, n)
 		self.assertAlmostEqual(nodes[0].p, marg[0], 2)
 		self.assertAlmostEqual(nodes[1].p, marg[1], 2)
 		self.assertAlmostEqual(nodes[2].p, marg[2], 2)
 
 	def test_multi_binary_leaf_update(self):
-		obs, marg, margpair, cov = binary_test_data(100000)
+		n = 100000
+		obs, marg, margpair, cov = binary_test_data(n)
 		node = MultiBinaryLeafNode.create(0, np.arange(3))
 		params = SPNParams()
 		for x in obs:
 			node.update(x, params)
+		self.assertEqual(node.n, n)
 		np.testing.assert_almost_equal(node.stat.probs, marg, decimal=2)
 		self.assertEqual(set(node.stat.matrices.keys()),
 		                 set([(0,1),(0,2),(1,2)]))
@@ -161,30 +174,41 @@ class TestSPN(unittest.TestCase):
 		                               margpair[(1,2)], decimal=2)
 
 	def test_multi_binary_normal_leaf_update(self):
-		obs, marg, margpair, cov = binary_test_data(100000)
+		n = 100000
+		m = 100
+		obs, marg, margpair, cov = binary_test_data(n)
 		node = MultiBinaryNormalLeafNode.create(0, np.arange(3))
 		params = SPNParams()
-		for x in obs:
-			node.update(x, params)
+		for k in range(0, n, m):
+			node.update(obs[k:k+m,:], params)
+		self.assertEqual(node.n, n)
 		np.testing.assert_almost_equal(node.stat.normal.mean, marg, decimal=2)
 		np.testing.assert_almost_equal(node.stat.normal.cov, cov, decimal=2)
 
 	def test_multi_normal_leaf_node_update(self):
-		obs, mean, cov = normal_test_data(100000)
+		n = 100000
+		m = 100
+		obs, mean, cov = normal_test_data(n)
 		node = MultiNormalLeafNode.create(0, np.arange(3))
 		params = SPNParams()
-		for x in obs:
-			node.update(x, params)
+		for k in range(0, n, m):
+			node.update(obs[k:k+m,:], params)
+		self.assertEqual(node.n, n)
 		np.testing.assert_almost_equal(node.stat.mean, mean, decimal=2)
 		np.testing.assert_almost_equal(node.stat.cov, cov, decimal=2)
 
 	def test_normal_leaf_node_update(self):
-		obs, mean, cov = normal_test_data(300000)
+		n = 300000
+		m = 100
+		obs, mean, cov = normal_test_data(n)
 		nodes = [NormalLeafNode(0, i) for i in range(3)]
 		params = SPNParams()
-		for x in obs:
+		for k in range(0, n, m):
 			for i in range(3):
-				nodes[i].update(x, params)
+				nodes[i].update(obs[k:k+m,:], params)
+		self.assertEqual(nodes[0].n, n)
+		self.assertEqual(nodes[1].n, n)
+		self.assertEqual(nodes[2].n, n)
 		self.assertAlmostEqual(nodes[0].mean, mean[0], 2)
 		self.assertAlmostEqual(nodes[1].mean, mean[1], 2)
 		self.assertAlmostEqual(nodes[2].mean, mean[2], 2)
