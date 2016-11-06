@@ -7,6 +7,7 @@ class RootNode(Node):
 		super(RootNode, self).__init__(node.n, node.scope)
 		self.children.append(node)
 		node.parent = self
+		self.batches = 0
 
 	def evaluate(self, obs):
 		return self.children[0].evaluate(obs)
@@ -14,7 +15,8 @@ class RootNode(Node):
 	def update(self, obs, params):
 		self.children[0].update(obs, params)
 		self.n += len(obs)
-		if params.prunebatch > 0:
+		self.batches += 1
+		if params.prunebatch > 0 and self.batches % params.prunebatch == 0:
 			params = copy.copy(params)
 			params.updatestruct = False
 			self.children[0].prune(params.maxdepth, params)

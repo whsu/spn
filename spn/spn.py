@@ -18,7 +18,7 @@ class SPNParams:
 	              weights when deciding which children to pass data to.
 	updatestruct : whether to update the network structure.
 	maxdepth : depth at which to prune the tree.
-	prunebatch : number of samples between each pruning.
+	prunebatch : number of batches between each pruning, 0 if no pruning
 	mvleaf : whether to use multivariate leaves.
 	mvmaxscope : number of variables that can be combined into a multivariate
 	             leaf node.
@@ -26,7 +26,7 @@ class SPNParams:
 	"""
 	def __init__(self, batchsize=128, mergebatch=128, corrthresh=0.1,
 	             equalweight=True, updatestruct=True, maxdepth=20,
-	             prunebatch=1000, mvleaf=True, mvmaxscope=2, leaftype="normal"):
+	             prunebatch=10, mvleaf=True, mvmaxscope=2, leaftype="normal"):
 		if leaftype=="binary" and mvmaxscope > 2:
 			raise ValueError("Binary leaf nodes cannot have more than two "
 			                 "variables in scope.")
