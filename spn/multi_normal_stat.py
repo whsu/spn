@@ -23,7 +23,7 @@ class MultiNormalStat:
 	def evaluate(self, x):
 		try:
 			return multivariate_normal.logpdf(x, self.mean, self.cov)
-		except np.linalg.LinAlgError:
+		except:
 			self.cov[np.diag_indices_from(self.cov)] += 1e-4
 			return multivariate_normal.logpdf(x, self.mean, self.cov)
 
