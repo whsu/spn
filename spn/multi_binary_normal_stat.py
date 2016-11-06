@@ -31,8 +31,10 @@ class MultiBinaryNormalStat:
 
 	def evaluate(self, x):
 		lo, hi = make_bounds(x)
-		p, i = mvn.mvnun(lo, hi, self.normal.mean, self.normal.cov+0.0001*np.identity(len(x)))
-		return math.log(np.clip(p,0.0001,0.9999))
+		p = [None] * len(x)
+		for j in range(len(x)):
+			p[j], _ = mvn.mvnun(lo[j], hi[j], self.normal.mean, self.normal.cov+0.0001*np.identity(x.shape[1]))
+		return np.log(np.clip(p,0.0001,0.9999))
 
 	def update(self, x, n):
 		self.normal.update(x, n)

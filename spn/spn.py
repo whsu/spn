@@ -30,9 +30,9 @@ class SPNParams:
 		if leaftype=="binary" and mvmaxscope > 2:
 			raise ValueError("Binary leaf nodes cannot have more than two "
 			                 "variables in scope.")
-		if (leaftype=="binary" or leaftype=="binarynormal") and batchsize > 1:
+		if leaftype=="binary" and batchsize > 1:
 			raise ValueError("Batch size greater than 1 not implemented "
-			                 "for binary data.")
+			                 "for binary leaf nodes.")
 		self.batchsize = batchsize
 		self.mergebatch = mergebatch
 		self.corrthresh = corrthresh
