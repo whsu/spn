@@ -20,14 +20,14 @@ class BinaryNormalLeafNode(Node):
 
 	def evaluate(self, obs):
 		p = np.clip(self.p, 0.0001, 0.9999)
-		if obs[self.index] == 1:
-			return math.log(p)
-		else:
-			return math.log(1-p)
+		result = np.empty(len(obs))
+		result[obs[:,self.index]==1] = math.log(p)
+		result[obs[:,self.index]==0] = math.log(1-p)
+		return result
 
 	def update(self, obs, params):
-		self.p = (self.n*self.p+obs[self.index])/(self.n+1)
-		self.n += 1
+		self.p = (self.n*self.p+obs[:,self.index].sum())/(self.n+len(obs))
+		self.n += len(obs)
 
 	def prune(self, depth, params):
 		pass

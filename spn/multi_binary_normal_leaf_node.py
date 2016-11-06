@@ -29,12 +29,12 @@ class MultiBinaryNormalLeafNode(Node):
 		return obs
 
 	def evaluate(self, obs):
-		x = obs[self.scope]
+		x = obs[:,self.scope]
 		return self.stat.evaluate(x)
 
 	def update(self, obs, params):
-		self.stat.update(obs[self.scope], self.n)
-		self.n += 1
+		self.stat.update(obs[:,self.scope], self.n)
+		self.n += len(obs)
 
 	def prune(self, depth, params):
 		pass
