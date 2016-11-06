@@ -83,32 +83,3 @@ def make_product_net(scope, leaftype):
 		node.add_child(node.Leaf(0, v))
 	return node
 
-if __name__ == '__main__':
-	from .product_node import ProductNode
-	from .multi_normal_leaf_node import MultiNormalLeafNode
-	from .normal_leaf_node import NormalLeafNode
-	import numpy as np
-
-	np.set_printoptions(precision=3)
-	np.random.seed(0)
-	n = 10000
-
-	mean = np.array([1., 2., 3.])
-	cov = np.array([[1.0, 0.5, 0.0],[0.5,2.0,0.0],[0.0,0.0,3.0]])
-	obs = np.random.multivariate_normal(mean, cov, n)
-	s = SPN(3, SPNParams(mvmaxscope=0))
-
-#	x = np.random.binomial(1, 0.1, (n,1))
-#	y = np.empty((n,1))
-#	i = np.where(x==0)[0]
-#	j = np.where(x==1)[0]
-#	y[i] = np.random.binomial(1, 0.2, (len(i),1))
-#	y[j] = np.random.binomial(1, 0.9, (len(j),1))
-#	z = np.random.binomial(1, 0.8, (n,1))
-#	obs = np.hstack((x,y,z)).astype(int)
-#	s = SPN(3, SPNParams(mergebatch=1000, leaftype="binary"))
-#	p = s.root.children[0]
-
-	s.update(obs)
-	s.display()
-

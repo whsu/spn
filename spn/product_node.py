@@ -164,43 +164,4 @@ class ProductNode(Node):
 			children = self.Leaf.create_from_stat(self.n, self.scope, self.stat)
 			self.add_children(*children)
 
-if __name__ == '__main__':
-	from .normal_leaf_node import *
-	from .spn import *
-	np.set_printoptions(precision=3, suppress=True)
-	np.random.seed(0)
-	n = 10000
-
-#	mean = np.array([1., 2., 3.])
-#	cov = np.array([[1.0, 0.5, 0.0],[0.5,2.0,0.0],[0.0,0.0,3.0]])
-#	obs = np.random.multivariate_normal(mean, cov, n)
-#	child1 = NormalLeafNode(0, 0)
-#	child2 = NormalLeafNode(0, 1)
-#	child3 = NormalLeafNode(0, 2)
-#	node = ProductNode(0, np.array([0,1,2]), binary=False)
-
-	n = 10000
-	x = np.random.binomial(1, 0.1, (n,1))
-	y = np.empty((n,1))
-	i = np.where(x==0)[0]
-	j = np.where(x==1)[0]
-	y[i] = np.random.binomial(1, 0.2, (len(i),1))
-	y[j] = np.random.binomial(1, 0.9, (len(j),1))
-	z = np.random.binomial(1, 0.8, (n,1))
-	obs = np.hstack((x,y,z)).astype(int)
-
-	child1 = BinaryLeafNode(0, 0)
-	child2 = BinaryLeafNode(0, 1)
-	child3 = BinaryLeafNode(0, 2)
-	node = ProductNode(0, np.array([0,1,2]), binary=True)
-
-	node.add_children(child1, child2, child3)
-	s = SPN(node, SPNParams(mergebatch=1000, maxdepth=5))
-	i = 0
-	for x in obs:
-		s.update(x)
-		i += 1
-		if i % 100 == 0:
-			print(i)
-	s.display()
 
