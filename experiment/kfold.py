@@ -80,37 +80,4 @@ def run(vartype, traintest, name, numvar, batchsize, mergebatch, corrthresh,
 		with open(picklepath, 'wb') as g:
 			pickle.dump(models, g)
 
-if __name__ == '__main__':
-	T = True
-	F = False
-	N = "normal"
-	run("real", F, 'qu',          4,   1,  10, 0.1, T, T, 100, 0, T, 0, N)
-	run("real", F, 'banknote',    4,   1,  10, 0.1, T, T, 100, 0, T, 0, N)
-	run("real", F, 'sensorless', 48, 256, 256, 0.1, T, T, 100, 0, T, 4, N)
-	run("real", F, 'flowdata',    3, 256, 256, 0.1, T, T, 100, 0, T, 0, N)
-	run("real", F, 'abalone',     8,   1,  10, 0.1, T, T, 100, 0, T, 4, N)
-	run("real", F, 'ki',          8,  10,  10, 0.1, T, T, 100, 0, T, 4, N)
-	run("real", F, 'ca',         22,  10,  10, 0.1, T, T, 100, 0, T, 4, N)
-	exit(0)
-
-	run("binary", True, 'nltcs', 16, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'plants', 69, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'baudio', 100, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'jester', 100, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'bnetflix', 100, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'accidents', 111, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'tretail', 135, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'pumsb_star', 163, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'dna', 180, 10, 0.1, True, True, 100, 50, False, 4, "binarynormal")
-	run("binary", True, 'kosarek', 190, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'msweb', 294, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'book', 500, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'tmovie', 500, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'cwebkb', 839, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'cr52', 889, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'c20ng', 910, 100, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'bbc', 1058, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'ad', 1556, 10, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'msnbc', 17, 10000, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
-	run("binary", True, 'kdd', 64, 10000, 0.1, True, True, 50, 1000, False, 4, "binarynormal")
 
