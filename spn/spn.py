@@ -10,6 +10,7 @@ class SPNParams:
 	Parameters
 	----------
 	batchsize : number of samples in a mini-batch.
+	            if 0, use the entire set as one batch.
 	mergebatch : number of samples a product node needs to see before updating
 	             its structure.
 	corrthresh : correlation coefficient threshold above which two variables
@@ -61,8 +62,11 @@ class SPN:
 	def update(self, obs):
 		if obs.ndim == 1:
 			obs = obs.reshape(1, len(obs))
-		for i in range(0, len(obs), self.params.batchsize):
-			self.root.update(obs[i:i+self.params.batchsize], self.params)
+		if self.params.batchsize > 0:
+			for i in range(0, len(obs), self.params.batchsize):
+				self.root.update(obs[i:i+self.params.batchsize], self.params)
+		else:
+			self.root.update(obs, self.params)
 
 	def display(self):
 		self.root.display()
