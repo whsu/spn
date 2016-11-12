@@ -27,12 +27,8 @@ class SPNParams:
 	def __init__(self, batchsize=128, mergebatch=128, corrthresh=0.1,
 	             equalweight=True, updatestruct=True, maxdepth=20,
 	             prunebatch=10, mvleaf=True, mvmaxscope=2, leaftype="normal"):
-		if leaftype=="binary" and mvmaxscope > 2:
-			raise ValueError("Binary leaf nodes cannot have more than two "
-			                 "variables in scope.")
-		if leaftype=="binary" and batchsize > 1:
-			raise ValueError("Batch size greater than 1 not implemented "
-			                 "for binary leaf nodes.")
+		if leaftype != "normal":
+			raise ValueError("Leaf type {0} not supported.".format(leaftype))
 		self.batchsize = batchsize
 		self.mergebatch = mergebatch
 		self.corrthresh = corrthresh

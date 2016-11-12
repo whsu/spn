@@ -5,31 +5,18 @@ from .sum_node import SumNode
 from .normal_leaf_node import NormalLeafNode
 from .multi_normal_leaf_node import MultiNormalLeafNode
 from .multi_normal_stat import MultiNormalStat
-from .binary_normal_leaf_node import BinaryNormalLeafNode
-from .multi_binary_normal_leaf_node import MultiBinaryNormalLeafNode
-from .multi_binary_normal_stat import MultiBinaryNormalStat
-from .binary_leaf_node import BinaryLeafNode
-from .multi_binary_leaf_node import MultiBinaryLeafNode
-from .multi_binary_stat import MultiBinaryStat
 
 class ProductNode(Node):
 	def __init__(self, n, scope, leaftype, src=None):
 		super(ProductNode, self).__init__(n, scope)
-		if leaftype == "binary":
-			self.Stat = MultiBinaryStat
-			self.Leaf = BinaryLeafNode
-			self.MVLeaf = MultiBinaryLeafNode
-			self.dtype = int
-		elif leaftype == "binarynormal":
-			self.Stat = MultiBinaryNormalStat
-			self.Leaf = BinaryNormalLeafNode
-			self.MVLeaf = MultiBinaryNormalLeafNode
-			self.dtype = int
-		else:
+		if leaftype == "normal":
 			self.Stat = MultiNormalStat
 			self.Leaf = NormalLeafNode
 			self.MVLeaf = MultiNormalLeafNode
 			self.dtype = float
+		else:
+			raise ValueError("Leaf type {0} not supported.".format(leaftype))
+		
 		m = len(scope)
 		if src is None:
 			self.stat = self.Stat.create(m)
