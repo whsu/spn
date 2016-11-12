@@ -136,19 +136,3 @@ class ProductNode(Node):
 		else:
 			self.merge_into_sumnode(ci, cj, scope, obs, params)
 
-	def prune(self, depth, params):
-		if depth > 0:
-			for child in self.children:
-				child.prune(depth-1, params)
-		elif params.mvleaf:
-			node = self.MVLeaf.create_from_stat(self.n, self.scope, self.stat)
-			parent = self.parent
-			parent.remove_child(self)
-			parent.add_child(node)
-		else:
-			self.children = []
-			self.i2c = [None] * len(self.scope)
-			children = self.Leaf.create_from_stat(self.n, self.scope, self.stat)
-			self.add_children(*children)
-
-

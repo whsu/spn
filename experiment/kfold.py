@@ -45,13 +45,13 @@ def run_kfold(vartype, name, k, numvar, params):
 	return results, times, models
 
 def run(vartype, traintest, name, numvar, batchsize, mergebatch, corrthresh,
-        equalweight, updatestruct, maxdepth, prunebatch, mvleaf, mvmaxscope, leaftype):
-	outfile = "{0}_{1}_{2}_{3}_{4}_{5}_{6}".format(name, batchsize, mergebatch,
-                           corrthresh, maxdepth, prunebatch, mvmaxscope)
+        equalweight, updatestruct, maxdepth, mvleaf, mvmaxscope, leaftype):
+	outfile = "{0}_{1}_{2}_{3}_{4}_{5}".format(name, batchsize, mergebatch,
+                           corrthresh, maxdepth, mvmaxscope)
 	resultpath = os.path.join(OUTDIR, "{0}.txt".format(outfile))
 	picklepath = os.path.join(OUTDIR, "{0}.pkl".format(outfile))
 	params = SPNParams(batchsize, mergebatch, corrthresh, equalweight, updatestruct,
-	    maxdepth, prunebatch, mvleaf, mvmaxscope, leaftype)
+	    maxdepth, mvleaf, mvmaxscope, leaftype)
 
 	print('******{0}*******'.format(name))
 

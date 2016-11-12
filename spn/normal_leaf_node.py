@@ -40,9 +40,6 @@ class NormalLeafNode(Node):
 		self.mean = mean
 		self.var = var
 
-	def prune(self, depth, params):
-		pass
-
 	@staticmethod
 	def create_from_stat(n, scope, stat):
 		nodes = [None] * len(scope)

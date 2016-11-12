@@ -46,16 +46,3 @@ class SumNode(Node):
 		self.children.remove(child)
 		child.parent = None
 
-	def prune(self, depth, params):
-		nc = len(self.children)
-		for i in range(nc-1, -1, -1):
-			child = self.children[i]
-			if child.n == 1:
-				obs = child.rep()
-				obs = obs.reshape(1, len(obs))
-				self.children.pop(i)
-				self.n -= 1
-				self.update(obs, params)
-		for child in self.children:
-			child.prune(depth-1, params)
-

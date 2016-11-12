@@ -36,6 +36,3 @@ class MultiNormalLeafNode(Node):
 		self.stat.update(obs[:,self.scope], self.n)
 		self.n += len(obs)
 
-	def prune(self, depth, params):
-		pass
-
