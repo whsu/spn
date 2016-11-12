@@ -1,6 +1,7 @@
 import numpy as np
 
 from .root_node import RootNode
+from .sum_node import SumNode
 from .product_node import ProductNode
 from .normal_leaf_node import NormalLeafNode
 from .multi_normal_leaf_node import MultiNormalLeafNode
@@ -46,11 +47,12 @@ class SPN:
 	params : SPNParams
 		parameters of the network
 	"""
-	def __init__(self, node, params):
+	def __init__(self, node, numcomp, params):
 		if type(node) == int:
 			numvar = node
 			scope = np.arange(numvar)
-			node = make_product_net(scope, params.leaftype)
+#			node = make_product_net(scope, params.leaftype)
+			node = init_root(scope, numcomp, params.leaftype)
 		self.root = RootNode(node)
 		self.params = params
 
@@ -70,6 +72,12 @@ class SPN:
 
 	def display(self):
 		self.root.display()
+
+def init_root(scope, nc, leaftype):
+	node = SumNode(0, scope)
+	children = [make_product_net(scope, leaftype) for i in range(nc)]
+	node.add_children(*children)
+	return node
 
 def make_product_net(scope, leaftype):
 	node = ProductNode(0, scope, leaftype)

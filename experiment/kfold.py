@@ -20,33 +20,33 @@ def make_train_test_filenames(vartype, name):
 	testfiles = [os.path.join(DATADIR, vartype, name, "{0}.test.data".format(name))]
 	return trainfiles, testfiles
 
-def run_train_test(trainfiles, testfiles, numvar, params):
-	model = SPN(numvar, params)
+def run_train_test(trainfiles, testfiles, numvar, numcomp, params):
+	model = SPN(numvar, numcomp, params)
 	experiment = Experiment(model, trainfiles, testfiles)
 	t0 = time.clock()
 	result = experiment.run()
 	t1 = time.clock()
 	return result, t1-t0, model
 
-def run_ith_fold(i, filenames, numvar, params):
+def run_ith_fold(i, filenames, numvar, numcomp, params):
 	testfiles = filenames[i:i+1]
 	trainfiles = filenames[i+1:] + filenames[:i]
-	return run_train_test(trainfiles, testfiles, numvar, params)
+	return run_train_test(trainfiles, testfiles, numvar, numcomp, params)
 
-def run_kfold(vartype, name, k, numvar, params):
+def run_kfold(vartype, name, k, numvar, numcomp, params):
 	filenames = make_kfold_filenames(vartype, name, k)
 	results = [None] * k
 	times = [None] * k
 	models = [None] * k
 	for i in range(k):
-		results[i], times[i], models[i] = run_ith_fold(i, filenames, numvar, params)
+		results[i], times[i], models[i] = run_ith_fold(i, filenames, numvar, numcomp, params)
 		print(i, results[i], times[i])
 	print(np.mean(results), np.std(results))
 	return results, times, models
 
-def run(vartype, traintest, name, numvar, batchsize, mergebatch, corrthresh,
+def run(vartype, traintest, name, numvar, numcomp, batchsize, mergebatch, corrthresh,
         equalweight, updatestruct, mvmaxscope, leaftype):
-	outfile = "{0}_{1}_{2}_{3}_{4}".format(name, batchsize, mergebatch,
+	outfile = "{0}_{1}_{2}_{3}_{4}_{5}".format(name, numcomp, batchsize, mergebatch,
                            corrthresh, mvmaxscope)
 	resultpath = os.path.join(OUTDIR, "{0}.txt".format(outfile))
 	picklepath = os.path.join(OUTDIR, "{0}.pkl".format(outfile))
@@ -57,7 +57,7 @@ def run(vartype, traintest, name, numvar, batchsize, mergebatch, corrthresh,
 
 	if traintest:
 		trainfiles, testfiles = make_train_test_filenames(vartype, name)
-		result, t, model = run_train_test(trainfiles, testfiles, numvar, params)
+		result, t, model = run_train_test(trainfiles, testfiles, numvar, numcomp, params)
 		print('Loglhd: {0:.3f}\n'.format(result))
 		print('Time: {0:.3f}\n'.format(t))
 		with open(resultpath, 'w') as g:
@@ -68,7 +68,7 @@ def run(vartype, traintest, name, numvar, batchsize, mergebatch, corrthresh,
 			pickle.dump(model, g)
 		print(model)
 	else:
-		results, times, models = run_kfold(vartype, name, 10, numvar, params)
+		results, times, models = run_kfold(vartype, name, 10, numvar, numcomp, params)
 
 		with open(resultpath, 'w') as g:
 			g.write('Loglhd: {0:.3f}, {1:.3f}\n'.format(np.mean(results), np.std(results)))
