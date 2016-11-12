@@ -17,14 +17,13 @@ class SPNParams:
 	equalweight : whether sum nodes should consider children as having equal
 	              weights when deciding which children to pass data to.
 	updatestruct : whether to update the network structure.
-	maxdepth : depth at which to prune the tree.
 	mvleaf : whether to use multivariate leaves.
 	mvmaxscope : number of variables that can be combined into a multivariate
 	             leaf node.
 	leaftype : type of leaf nodes, one of "normal", "binary", "binarynormal".
 	"""
 	def __init__(self, batchsize=128, mergebatch=128, corrthresh=0.1,
-	             equalweight=True, updatestruct=True, maxdepth=20,
+	             equalweight=True, updatestruct=True,
 	             mvleaf=True, mvmaxscope=2, leaftype="normal"):
 		if leaftype != "normal":
 			raise ValueError("Leaf type {0} not supported.".format(leaftype))
@@ -33,7 +32,6 @@ class SPNParams:
 		self.corrthresh = corrthresh
 		self.equalweight = equalweight
 		self.updatestruct = updatestruct
-		self.maxdepth = maxdepth
 		self.mvleaf = mvleaf
 		self.mvmaxscope = mvmaxscope
 		self.leaftype = leaftype
