@@ -5,6 +5,7 @@ import pickle
 import numpy as np
 
 from spn.spn import *
+from util.util import *
 from .experiment import Experiment
 
 DATADIR = 'data'
@@ -38,11 +39,15 @@ def run_kfold(vartype, name, k, numvar, numcomp, params):
 	results = [None] * k
 	times = [None] * k
 	models = [None] * k
+	numnodes = [None] * k
+	numparams = [None] * k
 	for i in range(k):
 		results[i], times[i], models[i] = run_ith_fold(i, filenames, numvar, numcomp, params)
-		print(i, results[i], times[i])
+		numnodes[i] = count_nodes(models[i])
+		numparams[i] = count_params(models[i])
+		print(i, results[i], times[i], numnodes[i], numparams[i])
 	print(np.mean(results), np.std(results))
-	return results, times, models
+	return results, times, models, numnodes, numparams
 
 def run(vartype, traintest, name, numvar, numcomp, batchsize, mergebatch, corrthresh,
         equalweight, updatestruct, mvmaxscope, leaftype):
@@ -58,24 +63,32 @@ def run(vartype, traintest, name, numvar, numcomp, batchsize, mergebatch, corrth
 	if traintest:
 		trainfiles, testfiles = make_train_test_filenames(vartype, name)
 		result, t, model = run_train_test(trainfiles, testfiles, numvar, numcomp, params)
-		print('Loglhd: {0:.3f}\n'.format(result))
-		print('Time: {0:.3f}\n'.format(t))
+		numnodes = count_nodes(model)
+		numparams = count_params(model)
+		print('Loglhd: {0:.3f}'.format(result))
+		print('Time: {0:.3f}'.format(t))
+		print('Number of nodes: {0}'.format(numnodes))
+		print('Number of parameters: {0}'.format(numparams))
 		with open(resultpath, 'w') as g:
 			g.write('Loglhd: {0:.3f}\n'.format(result))
 			g.write('Time: {0:.3f}\n'.format(t))
+			g.write('Number of nodes: {0}\n'.format(numnodes))
+			g.write('Number of parameters: {0}\n'.format(numparams))
 			g.close()
 		with open(picklepath, 'wb') as g:
 			pickle.dump(model, g)
-		print(model)
 	else:
-		results, times, models = run_kfold(vartype, name, 10, numvar, numcomp, params)
+		results, times, models, numnodes, numparams = run_kfold(
+		                    vartype, name, 10, numvar, numcomp, params)
 
 		with open(resultpath, 'w') as g:
 			g.write('Loglhd: {0:.3f}, {1:.3f}\n'.format(np.mean(results), np.std(results)))
 			g.write('Times: {0:.3f}, {1:.3f}\n'.format(np.mean(times), np.std(times)))
+			g.write('NumNodes: {0:.1f}, {1:.3f}\n'.format(np.mean(numnodes), np.std(numnodes)))
+			g.write('NumParams: {0:.3f}, {1:.3f}\n'.format(np.mean(numparams), np.std(numparams)))
 			g.write('\n')
-			for r, t in zip(results, times):
-				g.write('{0:.3f} {1:.3f}\n'.format(r, t))
+			for r, t, a, b in zip(results, times, numnodes, numparams):
+				g.write('{0:.3f} {1:.3f} {2} {3}\n'.format(r, t, a, b))
 			g.close()
 		with open(picklepath, 'wb') as g:
 			pickle.dump(models, g)
