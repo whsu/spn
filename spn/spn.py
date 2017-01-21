@@ -44,6 +44,9 @@ class SPN:
 	node : int or Node
 		if int, number of variables
 		if Node, root of network
+	numcomp : int >= 1
+		number of initial components for root sum node
+		not used if a root node is provided
 	params : SPNParams
 		parameters of the network
 	"""
@@ -51,7 +54,6 @@ class SPN:
 		if type(node) == int:
 			numvar = node
 			scope = np.arange(numvar)
-#			node = make_product_net(scope, params.leaftype)
 			node = init_root(scope, numcomp, params.leaftype)
 		self.root = RootNode(node)
 		self.params = params
