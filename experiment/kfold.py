@@ -9,7 +9,7 @@ from util.util import *
 from .experiment import Experiment
 
 DATADIR = 'data'
-OUTDIR = 'output'
+OUTDIR = 'results'
 
 def make_kfold_filenames(vartype, name, k):
 	filenames = [os.path.join(DATADIR, vartype, name, "{0}.{1}.data".format(name, i+1))
@@ -53,6 +53,10 @@ def run(vartype, traintest, name, numvar, numcomp, batchsize, mergebatch, corrth
         equalweight, updatestruct, mvmaxscope, leaftype):
 	outfile = "{0}_{1}_{2}_{3}_{4}_{5}".format(name, numcomp, batchsize, mergebatch,
                            corrthresh, mvmaxscope)
+
+	if not os.path.exists(OUTDIR):
+		os.makedirs(OUTDIR)
+
 	resultpath = os.path.join(OUTDIR, "{0}.txt".format(outfile))
 	picklepath = os.path.join(OUTDIR, "{0}.pkl".format(outfile))
 	params = SPNParams(batchsize, mergebatch, corrthresh, equalweight, updatestruct,
